@@ -1184,7 +1184,7 @@ const KEYSTATIC_CLOUD_HEADERS = {
 };
 const textEncoder = new TextEncoder();
 async function redirectToCloudAuth(from, config) {
-  var _config$cloud3;
+  var _config$cloud3, _config$cloud$url;
   if (!((_config$cloud3 = config.cloud) !== null && _config$cloud3 !== void 0 && _config$cloud3.project)) {
     throw new Error('Not a cloud config');
   }
@@ -1196,10 +1196,12 @@ async function redirectToCloudAuth(from, config) {
     from,
     code_verifier
   }));
-  // Keep the authorization navigation same-origin. Astro forwards this path
-  // to the configured Cloud origin, which is important for local Cloud
-  // development and prevents the browser from bypassing the site bridge.
-  const url = new URL(`${window.location.origin}/api/keystatic/cloud/oauth/authorize`);
+  // The authorization endpoint must be visited in the Cloud origin so its
+  // HttpOnly Cloud session is available. The callback exchanges the code via
+  // the consumer's same-origin bridge, where the project-scoped session cookie
+  // is established. Keep the bridge fallback during the legacy migration.
+  const cloudOrigin = (_config$cloud$url = config.cloud.url) !== null && _config$cloud$url !== void 0 ? _config$cloud$url : window.location.origin;
+  const url = new URL(config.cloud.url ? '/oauth/authorize' : '/api/keystatic/cloud/oauth/authorize', cloudOrigin);
   url.searchParams.set('state', state);
   url.searchParams.set('client_id', config.cloud.project);
   url.searchParams.set('redirect_uri', `${window.location.origin}/keystatic/cloud/oauth/callback`);

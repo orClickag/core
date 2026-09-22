@@ -19,8 +19,8 @@ import { ProgressCircle } from '@keystar/ui/progress';
 import { SearchField } from '@keystar/ui/search-field';
 import { useMediaQuery, breakpointQueries, css, tokenSchema, containerQueries, classNames, transition } from '@keystar/ui/style';
 import { TableView, TableHeader, Column, TableBody, Cell, Row } from '@keystar/ui/table';
-import { P as PageRoot, s as strings, a as PageHeader, f as fetchBlob, l as loadDataFile, p as parseProps, A as AppSlugContext, b as serializeProps, y as yjsToVal, c as parseEntry, d as serializeEntryToFiles, u as useItemData, e as PageBody, g as getYjsValFromParsedValue, h as containerWidthForEntryLayout, i as useCollection, j as usePreviewProps, k as useUpsertItem, m as usePreviewPropsFromY, n as useCreateBranchMutation, o as prettyErrorForCreateBranchMutation, q as useSlugFieldInfo, r as useDeleteItem, t as clientSideValidateProp, v as setValueToPreviewProps, F as FormForEntry, w as getInitialPropsValue, x as useAssociatedPullRequest, C as CreateBranchDialog, z as useNavItems, B as pluralize, D as useSidebar, S as SidebarDialog, E as SidebarPanel, G as SidebarProvider, H as useSingleton, I as InstallGitHubApp, J as AppSlugProvider, K as Provider } from './useItemData-12fafe72.js';
-import { u as useRouter, a as useTree, g as getCollectionPath, b as useRepoInfo, c as useCurrentBranch, i as isLocalConfig, d as useBaseCommit, e as getEntriesInCollectionWithTreeKey, f as useData, h as getCollectionFormat, j as getEntryDataFilepath, k as getCollectionItemPath, l as getSlugGlobForCollection, s as serializeRepoConfig, m as getAuth, G as GitHubAppShellQuery, p as parseRepoConfig, n as useCloudInfo, o as useAwarenessStates, q as getSlugFromState, r as blobSha, t as useYjs, v as getDraft, w as useYjsIfAvailable, L as LOADING, x as getCollection, y as suspendOnData, z as useShowRestoredDraftMessage, A as setDraft, B as delDraft, C as useEventCallback, D as useConfig, E as getBranchPrefix, F as getRepoUrl, H as getPathPrefix, I as getDataFileExtension, J as isGitHubConfig, K as useViewer, M as useContentPanelState, N as ContentPanelProvider, O as AppShellErrorContext, P as ConfigContext, Q as AppStateContext, R as GitHubAppShellProvider, S as LocalAppShellProvider, T as useBranches, U as GitHubAppShellDataContext, V as getSingletonFormat, W as getSingletonPath, X as isCloudConfig, Y as KEYSTATIC_CLOUD_BROWSER_API_URL, Z as KEYSTATIC_CLOUD_HEADERS, _ as assertValidRepoConfig, $ as RouterProvider, a0 as redirectToCloudAuth, a1 as CloudInfoProvider, a2 as GitHubAppShellDataProvider } from './index-30819e12.js';
+import { P as PageRoot, s as strings, a as PageHeader, f as fetchBlob, l as loadDataFile, p as parseProps, A as AppSlugContext, b as serializeProps, y as yjsToVal, c as parseEntry, d as serializeEntryToFiles, u as useItemData, e as PageBody, g as getYjsValFromParsedValue, h as containerWidthForEntryLayout, i as useCollection, j as usePreviewProps, k as useUpsertItem, m as usePreviewPropsFromY, n as useCreateBranchMutation, o as prettyErrorForCreateBranchMutation, q as useSlugFieldInfo, r as useDeleteItem, t as clientSideValidateProp, v as setValueToPreviewProps, F as FormForEntry, w as getInitialPropsValue, x as useAssociatedPullRequest, C as CreateBranchDialog, z as useNavItems, B as pluralize, D as useSidebar, S as SidebarDialog, E as SidebarPanel, G as SidebarProvider, H as useSingleton, I as InstallGitHubApp, J as AppSlugProvider, K as Provider } from './useItemData-83243723.js';
+import { u as useRouter, a as useTree, g as getCollectionPath, b as useRepoInfo, c as useCurrentBranch, i as isLocalConfig, d as useBaseCommit, e as getEntriesInCollectionWithTreeKey, f as useData, h as getCollectionFormat, j as getEntryDataFilepath, k as getCollectionItemPath, l as getSlugGlobForCollection, s as serializeRepoConfig, m as getAuth, G as GitHubAppShellQuery, p as parseRepoConfig, n as useCloudInfo, o as useAwarenessStates, q as getSlugFromState, r as blobSha, t as useYjs, v as getDraft, w as useYjsIfAvailable, L as LOADING, x as getCollection, y as suspendOnData, z as useShowRestoredDraftMessage, A as setDraft, B as delDraft, C as useEventCallback, D as useConfig, E as getBranchPrefix, F as getRepoUrl, H as getPathPrefix, I as getDataFileExtension, J as isGitHubConfig, K as useViewer, M as useContentPanelState, N as ContentPanelProvider, O as AppShellErrorContext, P as ConfigContext, Q as AppStateContext, R as GitHubAppShellProvider, S as LocalAppShellProvider, T as useBranches, U as GitHubAppShellDataContext, V as getSingletonFormat, W as getSingletonPath, X as isCloudConfig, Y as KEYSTATIC_CLOUD_BROWSER_API_URL, Z as KEYSTATIC_CLOUD_HEADERS, _ as assertValidRepoConfig, $ as RouterProvider, a0 as redirectToCloudAuth, a1 as CloudInfoProvider, a2 as GitHubAppShellDataProvider } from './index-68d71016.js';
 import { jsx, jsxs, Fragment } from 'react/jsx-runtime';
 import * as Y from 'yjs';
 import * as s from 'superstruct';
@@ -3637,21 +3637,18 @@ function AuthWrapper(props) {
       });
     }
     if (props.config.storage.kind === 'cloud') {
-      return /*#__PURE__*/jsx(Flex, {
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100vh",
-        children: /*#__PURE__*/jsx(Button, {
-          onPress: () => {
-            redirectToCloudAuth(router.params.map(encodeURIComponent).join('/'), props.config);
-          },
-          children: /*#__PURE__*/jsx(Text, {
-            children: "Log in with Keystatic Cloud"
-          })
-        })
+      return /*#__PURE__*/jsx(RedirectToCloudLogin, {
+        config: props.config,
+        from: router.params
       });
     }
   }
+  return null;
+}
+function RedirectToCloudLogin(props) {
+  useEffect(() => {
+    redirectToCloudAuth(props.from.map(encodeURIComponent).join('/'), props.config);
+  }, [props.config, props.from]);
   return null;
 }
 

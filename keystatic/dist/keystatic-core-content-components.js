@@ -1,5 +1,5 @@
-import { bb as CloudImagePreviewForNewEditor, bc as cloudImageToolbarIcon, bd as handleFile } from './index-30819e12.js';
-import { c as cloudImageSchema } from './cloud-image-schema-a86bc3b8.js';
+import { bb as CloudImagePreviewForNewEditor, bc as cloudImageToolbarIcon, bd as handleFile } from './index-68d71016.js';
+import { c as cloudImageSchema } from './cloud-image-schema-fcedfa84.js';
 import 'react-stately/useOverlayTriggerState';
 import 'react';
 import 'slate-react';
@@ -56,7 +56,7 @@ import 'partysocket/ws';
 import 'lib0/encoding.js';
 import 'react-aria/private/utils/useResizeObserver';
 import '@keystar/ui/avatar';
-import './index-5a044ed3.js';
+import './index-f88d9c47.js';
 
 function wrapper(config) {
   return {

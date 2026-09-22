@@ -34,6 +34,12 @@ type CommonConfig<Collections, Singletons> = {
     locale?: Locale;
     cloud?: {
         project: string;
+        /**
+         * Public Cloud origin used to begin the authorization-code flow. This is
+         * an origin, never a credential; API calls and the code exchange still go
+         * through the consumer's server-side Cloud bridge.
+         */
+        url?: string;
     };
     ui?: UserInterface<Collections, Singletons>;
 };
@@ -103,6 +109,7 @@ export type CloudConfig<Collections extends {
     storage: CloudStorageConfig;
     cloud: {
         project: string;
+        url?: string;
     };
     collections?: Collections;
     singletons?: Singletons;

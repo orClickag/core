@@ -252,21 +252,20 @@ function AuthWrapper(props: {
     }
     if (props.config.storage.kind === 'cloud') {
       return (
-        <Flex justifyContent="center" alignItems="center" height="100vh">
-          <Button
-            onPress={() => {
-              redirectToCloudAuth(
-                router.params.map(encodeURIComponent).join('/'),
-                props.config
-              );
-            }}
-          >
-            <Text>Log in with Keystatic Cloud</Text>
-          </Button>
-        </Flex>
+        <RedirectToCloudLogin config={props.config} from={router.params} />
       );
     }
   }
+  return null;
+}
+
+function RedirectToCloudLogin(props: { config: Config; from: string[] }) {
+  useEffect(() => {
+    redirectToCloudAuth(
+      props.from.map(encodeURIComponent).join('/'),
+      props.config
+    );
+  }, [props.config, props.from]);
   return null;
 }
 

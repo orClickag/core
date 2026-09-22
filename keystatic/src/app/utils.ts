@@ -207,11 +207,16 @@ export async function redirectToCloudAuth(from: string, config: Config) {
     'keystatic-cloud-state',
     JSON.stringify({ state, from, code_verifier })
   );
-  // Keep the authorization navigation same-origin. Astro forwards this path
-  // to the configured Cloud origin, which is important for local Cloud
-  // development and prevents the browser from bypassing the site bridge.
+  // The authorization endpoint must be visited in the Cloud origin so its
+  // HttpOnly Cloud session is available. The callback exchanges the code via
+  // the consumer's same-origin bridge, where the project-scoped session cookie
+  // is established. Keep the bridge fallback during the legacy migration.
+  const cloudOrigin = config.cloud.url ?? window.location.origin;
   const url = new URL(
-    `${window.location.origin}/api/keystatic/cloud/oauth/authorize`
+    config.cloud.url
+      ? '/oauth/authorize'
+      : '/api/keystatic/cloud/oauth/authorize',
+    cloudOrigin
   );
   url.searchParams.set('state', state);
   url.searchParams.set('client_id', config.cloud.project);

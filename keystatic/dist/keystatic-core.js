@@ -1,8 +1,8 @@
-import { L as useFieldSpan, s as strings, M as useArrayFieldValidationMessage, N as ArrayFieldListView, O as FormValueContentFromPreviewProps, w as getInitialPropsValue, Q as createGetPreviewProps, t as clientSideValidateProp, R as valueToUpdater, T as isValidURL, U as useIsInDocumentEditor, V as useObjectURL, W as getUploadedFile, X as getSrcPrefix, Y as ImageFieldInput, B as pluralize, Z as useSlugsInCollection, _ as document, $ as mdx, a0 as markdoc } from './useItemData-12fafe72.js';
-export { a4 as BlockWrapper, a5 as ToolbarSeparator, a2 as collection, a1 as config, a3 as singleton } from './useItemData-12fafe72.js';
-export { c as component } from './api-8138cad3.js';
-import { aM as basicFormFieldWithSimpleReaderParse, ab as FieldDataError, a7 as useImageLibraryURL, C as useEventCallback, D as useConfig, b1 as loadImageData, b2 as emptyImageData, b3 as UploadImageButton, b4 as ImageDimensionsInput, b5 as parseImageData, aB as object, aN as text, b6 as assertRequired, aL as fixPath, a as useTree, b7 as SlugFieldContext, b8 as PathContext, b9 as validateText } from './index-30819e12.js';
-export { au as NotEditable } from './index-30819e12.js';
+import { L as useFieldSpan, s as strings, M as useArrayFieldValidationMessage, N as ArrayFieldListView, O as FormValueContentFromPreviewProps, w as getInitialPropsValue, Q as createGetPreviewProps, t as clientSideValidateProp, R as valueToUpdater, T as isValidURL, U as useIsInDocumentEditor, V as useObjectURL, W as getUploadedFile, X as getSrcPrefix, Y as ImageFieldInput, B as pluralize, Z as useSlugsInCollection, _ as document, $ as mdx, a0 as markdoc } from './useItemData-83243723.js';
+export { a4 as BlockWrapper, a5 as ToolbarSeparator, a2 as collection, a1 as config, a3 as singleton } from './useItemData-83243723.js';
+export { c as component } from './api-1a6714f5.js';
+import { aM as basicFormFieldWithSimpleReaderParse, ab as FieldDataError, a7 as useImageLibraryURL, C as useEventCallback, D as useConfig, b1 as loadImageData, b2 as emptyImageData, b3 as UploadImageButton, b4 as ImageDimensionsInput, b5 as parseImageData, aB as object, aN as text, b6 as assertRequired, aL as fixPath, a as useTree, b7 as SlugFieldContext, b8 as PathContext, b9 as validateText } from './index-68d71016.js';
+export { au as NotEditable } from './index-68d71016.js';
 import { Picker, Item } from '@keystar/ui/picker';
 import { jsx, jsxs, Fragment } from 'react/jsx-runtime';
 import { ActionButton, ButtonGroup, Button, ClearButton } from '@keystar/ui/button';
@@ -16,7 +16,7 @@ import { useLocalizedStringFormatter } from 'react-aria/useLocalizedStringFormat
 import { useField } from 'react-aria/useField';
 import { useState, useId, useMemo, useEffect, useReducer, useContext } from 'react';
 import { Checkbox } from '@keystar/ui/checkbox';
-import { i as integer } from './index-5a044ed3.js';
+import { i as integer } from './index-f88d9c47.js';
 import { Icon } from '@keystar/ui/icon';
 import { imageIcon } from '@keystar/ui/icon/icons/imageIcon';
 import { TextLink } from '@keystar/ui/link';

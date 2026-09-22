@@ -1,8 +1,8 @@
-import { c as component } from './api-8138cad3.js';
-import { be as CloudImagePreview, bc as cloudImageToolbarIcon } from './index-30819e12.js';
-import { c as cloudImageSchema } from './cloud-image-schema-a86bc3b8.js';
+import { c as component } from './api-1a6714f5.js';
+import { be as CloudImagePreview, bc as cloudImageToolbarIcon } from './index-68d71016.js';
+import { c as cloudImageSchema } from './cloud-image-schema-fcedfa84.js';
 import '@keystar/ui/picker';
-import './useItemData-12fafe72.js';
+import './useItemData-83243723.js';
 import 'lru-cache';
 import 'react';
 import 'react/jsx-runtime';
@@ -178,7 +178,7 @@ import 'react-aria/private/utils/useEffectEvent';
 import 'partysocket/ws';
 import 'lib0/encoding.js';
 import 'react-aria/private/utils/useResizeObserver';
-import './index-5a044ed3.js';
+import './index-f88d9c47.js';
 
 /** @deprecated Experimental */
 function cloudImage(args) {

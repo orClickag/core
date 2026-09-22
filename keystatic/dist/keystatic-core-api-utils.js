@@ -1,8 +1,8 @@
 import 'fs/promises';
 import 'path';
-import { aZ as getDirectoriesForTreeKey, g as getCollectionPath, aB as object, V as getSingletonFormat, W as getSingletonPath } from './index-30819e12.js';
+import { aZ as getDirectoriesForTreeKey, g as getCollectionPath, aB as object, V as getSingletonFormat, W as getSingletonPath } from './index-68d71016.js';
 import '@keystar/ui/picker';
-import './useItemData-12fafe72.js';
+import './useItemData-83243723.js';
 import 'react/jsx-runtime';
 import '@keystar/ui/button';
 import '@keystar/ui/dialog';
