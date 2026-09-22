@@ -16,6 +16,7 @@
     "dev": "pnpm exec preconstruct dev",
     "format": "pnpm exec prettier --write .",
     "lint": "pnpm exec eslint .",
+    "prepare": "pnpm run build:packages",
     "validate": "pnpm run check:packages && pnpm run check:types"
   },
   "devDependencies": {
