@@ -1,6 +1,14 @@
 node_modules
 .DS_Store
 dist
+!astro/dist/
+!astro/dist/**
+!create/dist/
+!create/dist/**
+!design-system/pkg/dist/
+!design-system/pkg/dist/**
+!keystatic/dist/
+!keystatic/dist/**
 dist-ssr
 *.local
 .env
