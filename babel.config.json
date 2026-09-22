@@ -1,0 +1,33 @@
+{
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "targets": {
+          "node": 12,
+          "browsers": [
+            "last 2 chrome versions",
+            "last 2 firefox versions",
+            "last 2 safari versions",
+            "last 2 edge versions"
+          ]
+        }
+      }
+    ],
+    "@babel/preset-typescript",
+    ["@babel/preset-react", { "runtime": "automatic" }]
+  ],
+  "plugins": ["@babel/plugin-transform-runtime"],
+  "overrides": [
+    {
+      "test": ["keystatic/src/**/*", "design-system/pkg/src/**/*"],
+      "exclude": ["keystatic/src/form/fields/document/**/*"],
+      "plugins": [
+        [
+          "babel-plugin-react-compiler",
+          { "runtimeModule": "#react-compiler-runtime" }
+        ]
+      ]
+    }
+  ]
+}
