@@ -1,0 +1,57 @@
+{
+  "name": "@orclickag/keystatic-core",
+  "version": "0.0.0",
+  "private": true,
+  "license": "MIT",
+  "packageManager": "pnpm@11.20.0",
+  "engines": {
+    "pnpm": "11.20.0",
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "pnpm run build:packages",
+    "build:packages": "pnpm --filter @keystatic/core run setup && pnpm exec preconstruct build",
+    "check:packages": "pnpm exec preconstruct validate",
+    "check:types": "pnpm exec tsc --noEmit",
+    "dev": "pnpm exec preconstruct dev",
+    "format": "pnpm exec prettier --write .",
+    "lint": "pnpm exec eslint .",
+    "validate": "pnpm run check:packages && pnpm run check:types"
+  },
+  "devDependencies": {
+    "@preconstruct/cli": "^2.9.0",
+    "@types/node": "25.0.3",
+    "@types/react": "^19.0.8",
+    "@types/react-dom": "^19.0.3",
+    "@typescript-eslint/eslint-plugin": "^5.29.0",
+    "@typescript-eslint/parser": "^5.29.0",
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^8.5.0",
+    "prettier": "^3.0.3",
+    "prettier-plugin-packagejson": "^2.5.10",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "typescript": "^5.5.3",
+    "vitest": "^4.1.10"
+  },
+  "manypkg": {
+    "workspaceProtocol": "require"
+  },
+  "preconstruct": {
+    "packages": [
+      "astro",
+      "create",
+      "design-system/pkg",
+      "keystatic"
+    ],
+    "exports": {
+      "importConditionDefaultExport": "default"
+    },
+    "___experimentalFlags_WILL_CHANGE_IN_PATCH": {
+      "importsConditions": true,
+      "typeModule": true,
+      "distInRoot": true,
+      "checkTypeDependencies": true
+    }
+  }
+}

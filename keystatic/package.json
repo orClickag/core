@@ -4,8 +4,8 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Thinkmill/keystatic/",
-    "directory": "packages/keystatic"
+    "url": "https://github.com/orClickag/core",
+    "directory": "keystatic"
   },
   "type": "module",
   "exports": {

@@ -1,0 +1,28 @@
+packages:
+  - "astro"
+  - "create"
+  - "design-system/pkg"
+  - "design-system/primitives"
+  - "keystatic"
+
+onlyBuiltDependencies:
+  - "@swc/core"
+  - esbuild
+  - sharp
+  - workerd
+
+ignoredBuiltDependencies:
+  - core-js-pure
+
+catalog:
+  react-aria: 3.50.0
+  react-stately: 3.48.0
+
+minimumReleaseAgeExclude:
+  - "@preconstruct/cli@2.9.0"
+
+shellEmulator: true
+
+allowBuilds:
+  esbuild: true
+  sharp: true

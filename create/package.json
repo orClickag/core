@@ -7,8 +7,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Thinkmill/keystatic/",
-    "directory": "packages/create"
+    "url": "https://github.com/orClickag/core",
+    "directory": "create"
   },
   "scripts": {
     "dev": "node ."

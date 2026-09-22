@@ -4,8 +4,8 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Thinkmill/keystatic/",
-    "directory": "packages/astro"
+    "url": "https://github.com/orClickag/core",
+    "directory": "astro"
   },
   "type": "module",
   "exports": {

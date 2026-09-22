@@ -4,7 +4,7 @@
   "license": "MIT AND Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Thinkmill/keystatic/",
+    "url": "https://github.com/orClickag/core",
     "directory": "design-system/pkg"
   },
   "files": [
@@ -1496,7 +1496,6 @@
   "devDependencies": {
     "@internationalized/string-compiler": "^3.2.6",
     "@keystar/ui": "workspace:*",
-    "@keystar/ui-storybook": "workspace:^",
     "@svgr/core": "^6.5.1",
     "@svgr/plugin-jsx": "^6.5.1",
     "@svgr/plugin-prettier": "^6.5.1",
