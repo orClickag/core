@@ -31,7 +31,6 @@
     "@types/react-dom": "^19.0.3",
     "@typescript-eslint/eslint-plugin": "^5.29.0",
     "@typescript-eslint/parser": "^5.29.0",
-    "babel-plugin-react-compiler": "^0.0.0-experimental-696af53-20240625",
     "eslint": "^8.57.1",
     "eslint-config-prettier": "^8.5.0",
     "prettier": "^3.0.3",

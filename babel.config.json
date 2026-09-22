@@ -17,17 +17,5 @@
     "@babel/preset-typescript",
     ["@babel/preset-react", { "runtime": "automatic" }]
   ],
-  "plugins": ["@babel/plugin-transform-runtime"],
-  "overrides": [
-    {
-      "test": ["keystatic/src/**/*", "design-system/pkg/src/**/*"],
-      "exclude": ["keystatic/src/form/fields/document/**/*"],
-      "plugins": [
-        [
-          "babel-plugin-react-compiler",
-          { "runtimeModule": "#react-compiler-runtime" }
-        ]
-      ]
-    }
-  ]
+  "plugins": ["@babel/plugin-transform-runtime"]
 }
