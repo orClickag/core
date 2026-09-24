@@ -1,4 +1,4 @@
-import { aM as basicFormFieldWithSimpleReaderParse, ab as FieldDataError, b6 as assertRequired } from './index-68d71016.js';
+import { aM as basicFormFieldWithSimpleReaderParse, ab as FieldDataError, b6 as assertRequired } from './index-f046736f.js';
 import { NumberField } from '@keystar/ui/number-field';
 import { useReducer } from 'react';
 import { jsx } from 'react/jsx-runtime';

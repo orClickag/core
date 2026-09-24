@@ -25,6 +25,11 @@ export function getCloudAuth(config: Config) {
   return config.storage.kind === 'cloud' ? { accessToken: '' } : null;
 }
 
+function localAuthProject(config: Config) {
+  if (config.storage.kind !== 'local') return;
+  return config.ui?.localAuth?.project;
+}
+
 let _refreshTokenPromise: Promise<{ accessToken: string } | null> | undefined;
 
 export async function getAuth(config: Config) {
@@ -61,6 +66,17 @@ export async function getAuth(config: Config) {
       )}/session`,
       { credentials: 'same-origin', headers: { Accept: 'application/json' } }
     );
+    return response.ok ? { accessToken: '' } : null;
+  }
+  const project = localAuthProject(config);
+  if (project) {
+    const response = await fetch('/api/keystatic/local/session', {
+      credentials: 'same-origin',
+      headers: {
+        Accept: 'application/json',
+        'X-Keystatic-Project': project,
+      },
+    });
     return response.ok ? { accessToken: '' } : null;
   }
   return token;

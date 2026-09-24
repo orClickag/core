@@ -73,6 +73,20 @@ type UserInterface<Collections, Singletons> = {
     mark?: BrandMark;
     name: string;
   };
+  /**
+   * Enables the same-origin local account gate for filesystem storage. The
+   * project identifier is public and is used only to select the API session;
+   * passwords, tokens and bootstrap secrets remain server-side.
+   */
+  localAuth?: {
+    project: string;
+    /**
+     * Repository associated with the project during its one-time local
+     * administrator bootstrap. This is an integration setting, not an editor
+     * identity or credential.
+     */
+    repository?: string;
+  };
   navigation?: Navigation<
     | (keyof Collections & string)
     | (keyof Singletons & string)

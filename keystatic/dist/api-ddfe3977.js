@@ -1,5 +1,5 @@
 import '@keystar/ui/picker';
-import './useItemData-83243723.js';
+import './useItemData-a15ccb4e.js';
 import 'react/jsx-runtime';
 import '@keystar/ui/button';
 import '@keystar/ui/dialog';
@@ -11,7 +11,7 @@ import '@keystar/ui/typography';
 import 'react-aria/useLocalizedStringFormatter';
 import 'react-aria/useField';
 import 'react';
-import './index-68d71016.js';
+import './index-f046736f.js';
 import '@keystar/ui/drag-and-drop';
 import '@keystar/ui/icon';
 import '@keystar/ui/icon/icons/trash2Icon';

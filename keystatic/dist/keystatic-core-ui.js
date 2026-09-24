@@ -19,8 +19,8 @@ import { ProgressCircle } from '@keystar/ui/progress';
 import { SearchField } from '@keystar/ui/search-field';
 import { useMediaQuery, breakpointQueries, css, tokenSchema, containerQueries, classNames, transition } from '@keystar/ui/style';
 import { TableView, TableHeader, Column, TableBody, Cell, Row } from '@keystar/ui/table';
-import { P as PageRoot, s as strings, a as PageHeader, f as fetchBlob, l as loadDataFile, p as parseProps, A as AppSlugContext, b as serializeProps, y as yjsToVal, c as parseEntry, d as serializeEntryToFiles, u as useItemData, e as PageBody, g as getYjsValFromParsedValue, h as containerWidthForEntryLayout, i as useCollection, j as usePreviewProps, k as useUpsertItem, m as usePreviewPropsFromY, n as useCreateBranchMutation, o as prettyErrorForCreateBranchMutation, q as useSlugFieldInfo, r as useDeleteItem, t as clientSideValidateProp, v as setValueToPreviewProps, F as FormForEntry, w as getInitialPropsValue, x as useAssociatedPullRequest, C as CreateBranchDialog, z as useNavItems, B as pluralize, D as useSidebar, S as SidebarDialog, E as SidebarPanel, G as SidebarProvider, H as useSingleton, I as InstallGitHubApp, J as AppSlugProvider, K as Provider } from './useItemData-83243723.js';
-import { u as useRouter, a as useTree, g as getCollectionPath, b as useRepoInfo, c as useCurrentBranch, i as isLocalConfig, d as useBaseCommit, e as getEntriesInCollectionWithTreeKey, f as useData, h as getCollectionFormat, j as getEntryDataFilepath, k as getCollectionItemPath, l as getSlugGlobForCollection, s as serializeRepoConfig, m as getAuth, G as GitHubAppShellQuery, p as parseRepoConfig, n as useCloudInfo, o as useAwarenessStates, q as getSlugFromState, r as blobSha, t as useYjs, v as getDraft, w as useYjsIfAvailable, L as LOADING, x as getCollection, y as suspendOnData, z as useShowRestoredDraftMessage, A as setDraft, B as delDraft, C as useEventCallback, D as useConfig, E as getBranchPrefix, F as getRepoUrl, H as getPathPrefix, I as getDataFileExtension, J as isGitHubConfig, K as useViewer, M as useContentPanelState, N as ContentPanelProvider, O as AppShellErrorContext, P as ConfigContext, Q as AppStateContext, R as GitHubAppShellProvider, S as LocalAppShellProvider, T as useBranches, U as GitHubAppShellDataContext, V as getSingletonFormat, W as getSingletonPath, X as isCloudConfig, Y as KEYSTATIC_CLOUD_BROWSER_API_URL, Z as KEYSTATIC_CLOUD_HEADERS, _ as assertValidRepoConfig, $ as RouterProvider, a0 as redirectToCloudAuth, a1 as CloudInfoProvider, a2 as GitHubAppShellDataProvider } from './index-68d71016.js';
+import { P as PageRoot, s as strings, a as PageHeader, f as fetchBlob, l as loadDataFile, p as parseProps, A as AppSlugContext, b as serializeProps, y as yjsToVal, c as parseEntry, d as serializeEntryToFiles, u as useItemData, e as PageBody, g as getYjsValFromParsedValue, h as containerWidthForEntryLayout, i as useCollection, j as usePreviewProps, k as useUpsertItem, m as usePreviewPropsFromY, n as useCreateBranchMutation, o as prettyErrorForCreateBranchMutation, q as useSlugFieldInfo, r as useDeleteItem, t as clientSideValidateProp, v as setValueToPreviewProps, F as FormForEntry, w as getInitialPropsValue, x as useAssociatedPullRequest, C as CreateBranchDialog, z as useNavItems, B as pluralize, D as useSidebar, S as SidebarDialog, E as SidebarPanel, G as SidebarProvider, H as useSingleton, I as InstallGitHubApp, J as AppSlugProvider, K as Provider } from './useItemData-a15ccb4e.js';
+import { u as useRouter, a as useTree, g as getCollectionPath, b as useRepoInfo, c as useCurrentBranch, i as isLocalConfig, d as useBaseCommit, e as getEntriesInCollectionWithTreeKey, f as useData, h as getCollectionFormat, j as getEntryDataFilepath, k as getCollectionItemPath, l as getSlugGlobForCollection, s as serializeRepoConfig, m as getAuth, G as GitHubAppShellQuery, p as parseRepoConfig, n as useCloudInfo, o as useAwarenessStates, q as getSlugFromState, r as blobSha, t as useYjs, v as getDraft, w as useYjsIfAvailable, L as LOADING, x as getCollection, y as suspendOnData, z as useShowRestoredDraftMessage, A as setDraft, B as delDraft, C as useEventCallback, D as useConfig, E as getBranchPrefix, F as getRepoUrl, H as getPathPrefix, I as getDataFileExtension, J as isGitHubConfig, K as useViewer, M as useContentPanelState, N as ContentPanelProvider, O as AppShellErrorContext, P as ConfigContext, Q as AppStateContext, R as GitHubAppShellProvider, S as LocalAppShellProvider, T as useRawCloudInfo, U as useBranches, V as GitHubAppShellDataContext, W as getSingletonFormat, X as getSingletonPath, Y as isCloudConfig, Z as KEYSTATIC_CLOUD_BROWSER_API_URL, _ as KEYSTATIC_CLOUD_HEADERS, $ as assertValidRepoConfig, a0 as RouterProvider, a1 as redirectToCloudAuth, a2 as CloudInfoProvider, a3 as GitHubAppShellDataProvider } from './index-f046736f.js';
 import { jsx, jsxs, Fragment } from 'react/jsx-runtime';
 import * as Y from 'yjs';
 import * as s from 'superstruct';
@@ -2656,6 +2656,29 @@ const MainPanelLayout = props => {
   });
 };
 
+function CloudProvisioningState(props) {
+  var _props$config$cloud$u, _props$config$cloud;
+  const cloudInfo = useRawCloudInfo();
+  const isAdmin = cloudInfo !== null && cloudInfo !== "unauthorized" && cloudInfo.role === "admin" && cloudInfo.capabilities.provisioning;
+  const setupUrl = cloudInfo && cloudInfo !== "unauthorized" ? new URL(`/projects/${encodeURIComponent(cloudInfo.project.id)}`, (_props$config$cloud$u = (_props$config$cloud = props.config.cloud) === null || _props$config$cloud === void 0 ? void 0 : _props$config$cloud.url) !== null && _props$config$cloud$u !== void 0 ? _props$config$cloud$u : window.location.origin).toString() : null;
+  return /*#__PURE__*/jsx(EmptyState, {
+    icon: alertCircleIcon,
+    title: "Projeto Cloud ainda n\xE3o est\xE1 configurado",
+    message: isAdmin ? "Um administrador precisa vincular uma instalação GitHub, repositório e branch antes de abrir o editor." : "O projeto ainda não está disponível. Peça a um administrador para concluir a configuração no Cloud.",
+    actions: isAdmin && setupUrl ? /*#__PURE__*/jsx("a", {
+      href: setupUrl,
+      children: "Configurar projeto no Cloud"
+    }) : undefined
+  });
+}
+function getCloudErrorCode(error) {
+  var _error$graphQLErrors;
+  const code = error === null || error === void 0 || (_error$graphQLErrors = error.graphQLErrors) === null || _error$graphQLErrors === void 0 || (_error$graphQLErrors = _error$graphQLErrors.find(graphQLError => {
+    var _graphQLError$extensi;
+    return typeof (graphQLError === null || graphQLError === void 0 || (_graphQLError$extensi = graphQLError.extensions) === null || _graphQLError$extensi === void 0 ? void 0 : _graphQLError$extensi.code) === "string";
+  })) === null || _error$graphQLErrors === void 0 || (_error$graphQLErrors = _error$graphQLErrors.extensions) === null || _error$graphQLErrors === void 0 ? void 0 : _error$graphQLErrors.code;
+  return typeof code === "string" ? code : null;
+}
 function BranchNotFound(props) {
   var _appShellDataContext$;
   const branches = useBranches();
@@ -2672,14 +2695,16 @@ function BranchNotFound(props) {
 }
 const AppShell = props => {
   const content = /*#__PURE__*/jsx(AppShellErrorContext.Consumer, {
-    children: error => error && !(error !== null && error !== void 0 && error.graphQLErrors.some(err => {
+    children: error => error ? getCloudErrorCode(error) === "CLOUD_GITHUB_REPOSITORY_REQUIRED" && props.config.storage.kind === "cloud" ? /*#__PURE__*/jsx(CloudProvisioningState, {
+      config: props.config
+    }) : !(error !== null && error !== void 0 && error.graphQLErrors.some(err => {
       var _err$originalError;
-      return (err === null || err === void 0 || (_err$originalError = err.originalError) === null || _err$originalError === void 0 ? void 0 : _err$originalError.type) === 'NOT_FOUND';
+      return (err === null || err === void 0 || (_err$originalError = err.originalError) === null || _err$originalError === void 0 ? void 0 : _err$originalError.type) === "NOT_FOUND";
     })) ? /*#__PURE__*/jsx(EmptyState, {
       icon: alertCircleIcon,
       title: "Failed to load shell",
       message: error.message
-    }) : props.children
+    }) : props.children : props.children
   });
   const inner = /*#__PURE__*/jsx(ConfigContext.Provider, {
     value: props.config,
@@ -2696,7 +2721,7 @@ const AppShell = props => {
       })
     })
   });
-  if (isGitHubConfig(props.config) || props.config.storage.kind === 'cloud') {
+  if (isGitHubConfig(props.config) || props.config.storage.kind === "cloud") {
     return /*#__PURE__*/jsx(GitHubAppShellProvider, {
       currentBranch: props.currentBranch,
       config: props.config,
@@ -3499,7 +3524,7 @@ function RedirectToBranch(props) {
 function PageInner({
   config
 }) {
-  var _config$cloud;
+  var _config$ui, _config$cloud, _config$ui2;
   const {
     params
   } = useRouter();
@@ -3511,11 +3536,23 @@ function PageInner({
       config: config
     });
   }
+  if (isLocalConfig(config) && (_config$ui = config.ui) !== null && _config$ui !== void 0 && _config$ui.localAuth && params.length === 1 && params[0] === 'setup') {
+    return /*#__PURE__*/jsx(LocalSetup, {
+      config: config
+    });
+  }
   let wrapper = x => x;
   if (isCloudConfig(config) || isLocalConfig(config) && (_config$cloud = config.cloud) !== null && _config$cloud !== void 0 && _config$cloud.project) {
     wrapper = element => /*#__PURE__*/jsx(CloudInfoProvider, {
       config: config,
       children: element
+    });
+  }
+  if (isLocalConfig(config) && (_config$ui2 = config.ui) !== null && _config$ui2 !== void 0 && _config$ui2.localAuth) {
+    const originalWrapper = wrapper;
+    wrapper = element => /*#__PURE__*/jsx(AuthWrapper, {
+      config: config,
+      children: originalWrapper(element)
     });
   }
   if (isGitHubConfig(config) || isCloudConfig(config)) {
@@ -3615,6 +3652,7 @@ function AuthWrapper(props) {
     return props.children;
   }
   if (state === 'explicit-auth') {
+    var _props$config$ui;
     if (props.config.storage.kind === 'github') {
       return /*#__PURE__*/jsx(Flex, {
         justifyContent: "center",
@@ -3642,8 +3680,210 @@ function AuthWrapper(props) {
         from: router.params
       });
     }
+    if (props.config.storage.kind === 'local' && (_props$config$ui = props.config.ui) !== null && _props$config$ui !== void 0 && _props$config$ui.localAuth) {
+      return /*#__PURE__*/jsx(LocalLogin, {
+        config: props.config
+      });
+    }
   }
   return null;
+}
+function LocalLogin(props) {
+  var _props$config$ui2;
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState(null);
+  const project = (_props$config$ui2 = props.config.ui) === null || _props$config$ui2 === void 0 || (_props$config$ui2 = _props$config$ui2.localAuth) === null || _props$config$ui2 === void 0 ? void 0 : _props$config$ui2.project;
+  async function submit(event) {
+    event.preventDefault();
+    if (!project) return;
+    setSubmitting(true);
+    setError(null);
+    try {
+      const response = await fetch('/api/keystatic/local/login', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          username,
+          password,
+          project_id: project
+        })
+      });
+      if (!response.ok) {
+        setError('Usuário, senha ou acesso ao projeto inválido.');
+        return;
+      }
+      window.location.reload();
+    } catch {
+      setError('Não foi possível acessar o serviço de autenticação.');
+    } finally {
+      setSubmitting(false);
+    }
+  }
+  return /*#__PURE__*/jsx(Flex, {
+    justifyContent: "center",
+    alignItems: "center",
+    height: "100vh",
+    children: /*#__PURE__*/jsxs("form", {
+      onSubmit: submit,
+      style: {
+        display: 'grid',
+        gap: '1rem',
+        minWidth: '20rem'
+      },
+      children: [/*#__PURE__*/jsxs("div", {
+        children: [/*#__PURE__*/jsx("h1", {
+          children: "Entrar no Keystatic"
+        }), /*#__PURE__*/jsx("p", {
+          children: "Use a conta local criada pelo administrador deste projeto."
+        })]
+      }), /*#__PURE__*/jsxs("label", {
+        children: ["Usu\xE1rio", /*#__PURE__*/jsx("input", {
+          autoComplete: "username",
+          disabled: submitting,
+          onChange: event => setUsername(event.target.value),
+          required: true,
+          value: username
+        })]
+      }), /*#__PURE__*/jsxs("label", {
+        children: ["Senha", /*#__PURE__*/jsx("input", {
+          autoComplete: "current-password",
+          disabled: submitting,
+          minLength: 12,
+          onChange: event => setPassword(event.target.value),
+          required: true,
+          type: "password",
+          value: password
+        })]
+      }), error && /*#__PURE__*/jsx("p", {
+        role: "alert",
+        children: error
+      }), /*#__PURE__*/jsx("button", {
+        disabled: submitting,
+        type: "submit",
+        children: submitting ? 'Entrando…' : 'Entrar'
+      })]
+    })
+  });
+}
+function LocalSetup(props) {
+  var _props$config$ui3, _props$config$ui4;
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [passwordConfirmation, setPasswordConfirmation] = useState('');
+  const [bootstrapToken, setBootstrapToken] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState(null);
+  const project = (_props$config$ui3 = props.config.ui) === null || _props$config$ui3 === void 0 || (_props$config$ui3 = _props$config$ui3.localAuth) === null || _props$config$ui3 === void 0 ? void 0 : _props$config$ui3.project;
+  const repository = (_props$config$ui4 = props.config.ui) === null || _props$config$ui4 === void 0 || (_props$config$ui4 = _props$config$ui4.localAuth) === null || _props$config$ui4 === void 0 ? void 0 : _props$config$ui4.repository;
+  async function submit(event) {
+    event.preventDefault();
+    if (!project || !repository) {
+      setError('O projeto ou repositório autorizado não está configurado.');
+      return;
+    }
+    if (password !== passwordConfirmation) {
+      setError('As senhas não coincidem.');
+      return;
+    }
+    setSubmitting(true);
+    setError(null);
+    try {
+      const response = await fetch('/api/keystatic/local/register', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Auth-Bootstrap': bootstrapToken
+        },
+        body: JSON.stringify({
+          username,
+          password,
+          project_id: project,
+          site_url: window.location.origin,
+          github_repository: repository
+        })
+      });
+      if (!response.ok) {
+        setError('Não foi possível criar o administrador. Confirme o token e se o bootstrap ainda está disponível.');
+        return;
+      }
+      window.location.assign('/keystatic');
+    } catch {
+      setError('Não foi possível acessar o serviço de autenticação.');
+    } finally {
+      setSubmitting(false);
+    }
+  }
+  return /*#__PURE__*/jsx(Flex, {
+    justifyContent: "center",
+    alignItems: "center",
+    height: "100vh",
+    children: /*#__PURE__*/jsxs("form", {
+      onSubmit: submit,
+      style: {
+        display: 'grid',
+        gap: '1rem',
+        minWidth: '20rem'
+      },
+      children: [/*#__PURE__*/jsxs("div", {
+        children: [/*#__PURE__*/jsx("h1", {
+          children: "Criar o primeiro administrador"
+        }), /*#__PURE__*/jsx("p", {
+          children: "Este cadastro s\xF3 funciona uma vez. Use o token de bootstrap fornecido pelo operador da API; ele n\xE3o \xE9 armazenado no navegador."
+        })]
+      }), /*#__PURE__*/jsxs("label", {
+        children: ["Usu\xE1rio", /*#__PURE__*/jsx("input", {
+          autoComplete: "username",
+          disabled: submitting,
+          minLength: 3,
+          onChange: event => setUsername(event.target.value),
+          required: true,
+          value: username
+        })]
+      }), /*#__PURE__*/jsxs("label", {
+        children: ["Senha", /*#__PURE__*/jsx("input", {
+          autoComplete: "new-password",
+          disabled: submitting,
+          minLength: 12,
+          onChange: event => setPassword(event.target.value),
+          required: true,
+          type: "password",
+          value: password
+        })]
+      }), /*#__PURE__*/jsxs("label", {
+        children: ["Confirmar senha", /*#__PURE__*/jsx("input", {
+          autoComplete: "new-password",
+          disabled: submitting,
+          minLength: 12,
+          onChange: event => setPasswordConfirmation(event.target.value),
+          required: true,
+          type: "password",
+          value: passwordConfirmation
+        })]
+      }), /*#__PURE__*/jsxs("label", {
+        children: ["Token de bootstrap", /*#__PURE__*/jsx("input", {
+          autoComplete: "off",
+          disabled: submitting,
+          onChange: event => setBootstrapToken(event.target.value),
+          required: true,
+          type: "password",
+          value: bootstrapToken
+        })]
+      }), error && /*#__PURE__*/jsx("p", {
+        role: "alert",
+        children: error
+      }), /*#__PURE__*/jsx("button", {
+        disabled: submitting,
+        type: "submit",
+        children: submitting ? 'Criando…' : 'Criar administrador'
+      })]
+    })
+  });
 }
 function RedirectToCloudLogin(props) {
   useEffect(() => {

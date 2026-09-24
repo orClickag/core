@@ -1252,6 +1252,11 @@ function getCloudAuth(config) {
     accessToken: ''
   } : null;
 }
+function localAuthProject(config) {
+  var _config$ui;
+  if (config.storage.kind !== 'local') return;
+  return (_config$ui = config.ui) === null || _config$ui === void 0 || (_config$ui = _config$ui.localAuth) === null || _config$ui === void 0 ? void 0 : _config$ui.project;
+}
 let _refreshTokenPromise;
 async function getAuth(config) {
   const token = getSyncAuth(config);
@@ -1286,6 +1291,19 @@ async function getAuth(config) {
       credentials: 'same-origin',
       headers: {
         Accept: 'application/json'
+      }
+    });
+    return response.ok ? {
+      accessToken: ''
+    } : null;
+  }
+  const project = localAuthProject(config);
+  if (project) {
+    const response = await fetch('/api/keystatic/local/session', {
+      credentials: 'same-origin',
+      headers: {
+        Accept: 'application/json',
+        'X-Keystatic-Project': project
       }
     });
     return response.ok ? {
@@ -2165,9 +2183,9 @@ function fetchLocalTree(sha) {
   if (treeCache.has(sha)) {
     return treeCache.get(sha);
   }
-  const promise = fetch('/api/keystatic/tree', {
+  const promise = fetch("/api/keystatic/tree", {
     headers: {
-      'no-cors': '1'
+      "no-cors": "1"
     }
   }).then(x => x.json()).then(async entries => hydrateTreeCacheWithEntries(entries));
   treeCache.set(sha, promise);
@@ -2177,10 +2195,10 @@ function useSetTreeSha() {
   return useContext(SetTreeShaContext);
 }
 const SetTreeShaContext = /*#__PURE__*/createContext(() => {
-  throw new Error('SetTreeShaContext not set');
+  throw new Error("SetTreeShaContext not set");
 });
 function LocalAppShellProvider(props) {
-  const [currentTreeSha, setCurrentTreeSha] = useState('initial');
+  const [currentTreeSha, setCurrentTreeSha] = useState("initial");
   const tree = useData(useCallback(() => fetchLocalTree(currentTreeSha), [currentTreeSha]));
   const allTreeData = useMemo(() => ({
     unscopedDefault: tree,
@@ -2194,7 +2212,7 @@ function LocalAppShellProvider(props) {
     }
   }), [tree]);
   const changedData = useMemo(() => {
-    if (allTreeData.scoped.merged.kind !== 'loaded') {
+    if (allTreeData.scoped.merged.kind !== "loaded") {
       return {
         collections: new Map(),
         singletons: new Set()
@@ -2221,7 +2239,13 @@ const cloudInfoSchema = s.type({
     avatarUrl: s.optional(s.string())
   }),
   project: s.type({
+    id: s.string(),
     name: s.string()
+  }),
+  role: s.enums(["admin", "author"]),
+  capabilities: s.type({
+    media: s.boolean(),
+    provisioning: s.boolean()
   }),
   team: s.object({
     name: s.string(),
@@ -2233,7 +2257,7 @@ const cloudInfoSchema = s.type({
 const CloudInfo = /*#__PURE__*/createContext(null);
 function useCloudInfo() {
   const context = useContext(CloudInfo);
-  return context === 'unauthorized' ? null : context;
+  return context === "unauthorized" ? null : context;
 }
 function useRawCloudInfo() {
   return useContext(CloudInfo);
@@ -2241,49 +2265,55 @@ function useRawCloudInfo() {
 function CloudInfoProvider(props) {
   const data = useData(useCallback(async () => {
     var _props$config$cloud;
-    if (!((_props$config$cloud = props.config.cloud) !== null && _props$config$cloud !== void 0 && _props$config$cloud.project)) throw new Error('no cloud project set');
+    if (!((_props$config$cloud = props.config.cloud) !== null && _props$config$cloud !== void 0 && _props$config$cloud.project)) throw new Error("no cloud project set");
     if (!getCloudAuth(props.config)) {
-      return 'unauthorized';
+      return "unauthorized";
     }
     const res = await fetch(`/api/keystatic/cloud/v2/projects/${encodeURIComponent(props.config.cloud.project)}/session`, {
-      credentials: 'same-origin',
+      credentials: "same-origin",
       headers: {
         ...KEYSTATIC_CLOUD_HEADERS,
-        Accept: 'application/json'
+        Accept: "application/json"
       }
     });
     if (res.status === 401 || res.status === 403 || !res.ok) {
-      return 'unauthorized';
+      return "unauthorized";
     }
     const envelope = await res.json();
     const session = envelope.data;
     return cloudInfoSchema.create({
       user: session.user,
       project: {
+        id: session.project.id,
         name: session.project.name
       },
+      role: session.role,
+      capabilities: {
+        media: session.capabilities.media,
+        provisioning: session.capabilities.provisioning
+      },
       team: {
-        name: props.config.cloud.project.split('/')[0],
-        slug: props.config.cloud.project.split('/')[0],
+        name: props.config.cloud.project.split("/")[0],
+        slug: props.config.cloud.project.split("/")[0],
         images: session.capabilities.media,
         multiplayer: false
       }
     });
   }, [props.config]));
   return /*#__PURE__*/jsx(CloudInfo.Provider, {
-    value: data.kind === 'loaded' ? data.data : null,
+    value: data.kind === "loaded" ? data.data : null,
     children: props.children
   });
 }
 const GitHubAppShellDataContext = /*#__PURE__*/createContext(null);
 function GitHubAppShellDataProvider(props) {
   var _state$data, _state$data2, _moreRefsState$data, _state$data3;
-  const repo = props.config.storage.kind === 'github' ? parseRepoConfig(props.config.storage.repo) : {
-    name: 'repo-name',
-    owner: 'repo-owner'
+  const repo = props.config.storage.kind === "github" ? parseRepoConfig(props.config.storage.repo) : {
+    name: "repo-name",
+    owner: "repo-owner"
   };
   const [state] = useQuery({
-    query: props.config.storage.kind === 'github' ? GitHubAppShellQuery : CloudAppShellQuery,
+    query: props.config.storage.kind === "github" ? GitHubAppShellQuery : CloudAppShellQuery,
     variables: repo
   });
   const [cursorState, setCursorState] = useState(null);
@@ -2325,12 +2355,12 @@ function GitHubAppShellDataProvider(props) {
   return /*#__PURE__*/jsx(GitHubAppShellDataContext.Provider, {
     value: state,
     children: /*#__PURE__*/jsx(ViewerContext.Provider, {
-      value: state.data && 'viewer' in state.data ? state.data.viewer : undefined,
+      value: state.data && "viewer" in state.data ? state.data.viewer : undefined,
       children: props.children
     })
   });
 }
-const writePermissions = new Set(['WRITE', 'ADMIN', 'MAINTAIN']);
+const writePermissions = new Set(["WRITE", "ADMIN", "MAINTAIN"]);
 function GitHubAppShellProvider(props) {
   var _repo, _repo3, _repo5, _defaultBranchRef$tar, _currentBranchRef$tar, _repo7, _repo9, _repo0, _repo10, _repo11, _repo12, _repo13, _repo14;
   const router = useRouter();
@@ -2339,7 +2369,7 @@ function GitHubAppShellProvider(props) {
     error
   } = useContext(GitHubAppShellDataContext);
   let repo = data === null || data === void 0 ? void 0 : data.repository;
-  if (repo && 'viewerPermission' in repo && repo.viewerPermission && !writePermissions.has(repo.viewerPermission) && 'forks' in repo) {
+  if (repo && "viewerPermission" in repo && repo.viewerPermission && !writePermissions.has(repo.viewerPermission) && "forks" in repo) {
     var _repo$forks$nodes$, _repo$forks;
     repo = (_repo$forks$nodes$ = (_repo$forks = repo.forks) === null || _repo$forks === void 0 || (_repo$forks = _repo$forks.nodes) === null || _repo$forks === void 0 ? void 0 : _repo$forks[0]) !== null && _repo$forks$nodes$ !== void 0 ? _repo$forks$nodes$ : repo;
   }
@@ -2353,7 +2383,7 @@ function GitHubAppShellProvider(props) {
     if ((_repo4 = repo) !== null && _repo4 !== void 0 && (_repo4 = _repo4.refs) !== null && _repo4 !== void 0 && _repo4.nodes) {
       garbageCollectGitObjects(repo.refs.nodes.map(x => {
         var _x$target;
-        return (x === null || x === void 0 || (_x$target = x.target) === null || _x$target === void 0 ? void 0 : _x$target.__typename) === 'Commit' ? x.target.tree.oid : undefined;
+        return (x === null || x === void 0 || (_x$target = x.target) === null || _x$target === void 0 ? void 0 : _x$target.__typename) === "Commit" ? x.target.tree.oid : undefined;
       }).filter(isDefined));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -2378,7 +2408,7 @@ function GitHubAppShellProvider(props) {
     };
   }, [currentBranchTree, defaultBranchTree, props.config]);
   const changedData = useMemo(() => {
-    if (allTreeData.scoped.merged.kind !== 'loaded') {
+    if (allTreeData.scoped.merged.kind !== "loaded") {
       return {
         collections: new Map(),
         singletons: new Set()
@@ -2390,23 +2420,23 @@ function GitHubAppShellProvider(props) {
     var _error$response, _repo6;
     if ((error === null || error === void 0 || (_error$response = error.response) === null || _error$response === void 0 ? void 0 : _error$response.status) === 401) {
       if (isGitHubConfig(props.config)) {
-        window.location.href = `/api/keystatic/github/login?from=${router.params.map(encodeURIComponent).join('/')}`;
+        window.location.href = `/api/keystatic/github/login?from=${router.params.map(encodeURIComponent).join("/")}`;
       } else {
-        redirectToCloudAuth(router.params.map(encodeURIComponent).join('/'), props.config);
+        redirectToCloudAuth(router.params.map(encodeURIComponent).join("/"), props.config);
       }
     }
     if (!((_repo6 = repo) !== null && _repo6 !== void 0 && _repo6.id) && error !== null && error !== void 0 && error.graphQLErrors.some(err => {
       var _err$originalError, _err$originalError2;
-      return (err === null || err === void 0 || (_err$originalError = err.originalError) === null || _err$originalError === void 0 ? void 0 : _err$originalError.type) === 'NOT_FOUND' || (err === null || err === void 0 || (_err$originalError2 = err.originalError) === null || _err$originalError2 === void 0 ? void 0 : _err$originalError2.type) === 'FORBIDDEN';
+      return (err === null || err === void 0 || (_err$originalError = err.originalError) === null || _err$originalError === void 0 ? void 0 : _err$originalError.type) === "NOT_FOUND" || (err === null || err === void 0 || (_err$originalError2 = err.originalError) === null || _err$originalError2 === void 0 ? void 0 : _err$originalError2.type) === "FORBIDDEN";
     })) {
-      window.location.href = `/api/keystatic/github/repo-not-found?from=${router.params.map(encodeURIComponent).join('/')}`;
+      window.location.href = `/api/keystatic/github/repo-not-found?from=${router.params.map(encodeURIComponent).join("/")}`;
     }
   }, [error, router, (_repo7 = repo) === null || _repo7 === void 0 ? void 0 : _repo7.id, props.config]);
   const branches = useMemo(() => {
     var _repo8;
     return new Map((_repo8 = repo) === null || _repo8 === void 0 || (_repo8 = _repo8.refs) === null || _repo8 === void 0 || (_repo8 = _repo8.nodes) === null || _repo8 === void 0 ? void 0 : _repo8.flatMap(x => {
       var _x$target2;
-      if ((x === null || x === void 0 || (_x$target2 = x.target) === null || _x$target2 === void 0 ? void 0 : _x$target2.__typename) !== 'Commit') {
+      if ((x === null || x === void 0 || (_x$target2 = x.target) === null || _x$target2 === void 0 ? void 0 : _x$target2.__typename) !== "Commit") {
         return [];
       }
       return [[x.name, {
@@ -2416,7 +2446,7 @@ function GitHubAppShellProvider(props) {
       }]];
     }));
   }, [(_repo9 = repo) === null || _repo9 === void 0 || (_repo9 = _repo9.refs) === null || _repo9 === void 0 ? void 0 : _repo9.nodes]);
-  const hasWritePermission = !!repo && (props.config.storage.kind === 'cloud' || 'viewerPermission' in repo && !!((_repo0 = repo) !== null && _repo0 !== void 0 && _repo0.viewerPermission) && writePermissions.has(repo.viewerPermission));
+  const hasWritePermission = !!repo && (props.config.storage.kind === "cloud" || "viewerPermission" in repo && !!((_repo0 = repo) !== null && _repo0 !== void 0 && _repo0.viewerPermission) && writePermissions.has(repo.viewerPermission));
   const repoInfo = useMemo(() => {
     var _repo1;
     if (!(data !== null && data !== void 0 && data.repository) || !((_repo1 = repo) !== null && _repo1 !== void 0 && (_repo1 = _repo1.defaultBranchRef) !== null && _repo1 !== void 0 && _repo1.name)) return null;
@@ -2445,7 +2475,7 @@ function GitHubAppShellProvider(props) {
             value: changedData,
             children: /*#__PURE__*/jsx(TreeContext.Provider, {
               value: allTreeData,
-              children: props.config.storage.kind === 'cloud' ? /*#__PURE__*/jsx(CollabProvider, {
+              children: props.config.storage.kind === "cloud" ? /*#__PURE__*/jsx(CollabProvider, {
                 config: props.config,
                 children: props.children
               }) : props.children
@@ -2457,7 +2487,7 @@ function GitHubAppShellProvider(props) {
   });
 }
 const AppShellErrorContext = /*#__PURE__*/createContext(undefined);
-const CurrentBranchContext = /*#__PURE__*/createContext('');
+const CurrentBranchContext = /*#__PURE__*/createContext("");
 function useCurrentBranch() {
   return useContext(CurrentBranchContext);
 }
@@ -2475,20 +2505,20 @@ const ChangedContext = /*#__PURE__*/createContext({
 });
 const TreeContext = /*#__PURE__*/createContext({
   unscopedDefault: {
-    kind: 'loading',
+    kind: "loading",
     promise: LOADING
   },
   scoped: {
     current: {
-      kind: 'loading',
+      kind: "loading",
       promise: LOADING
     },
     default: {
-      kind: 'loading',
+      kind: "loading",
       promise: LOADING
     },
     merged: {
-      kind: 'loading',
+      kind: "loading",
       promise: LOADING
     }
   }
@@ -2506,7 +2536,7 @@ function useBaseCommit() {
   var _branchInfo$get$commi, _branchInfo$get;
   const branchInfo = useBranches();
   const currentBranch = useCurrentBranch();
-  return (_branchInfo$get$commi = (_branchInfo$get = branchInfo.get(currentBranch)) === null || _branchInfo$get === void 0 ? void 0 : _branchInfo$get.commitSha) !== null && _branchInfo$get$commi !== void 0 ? _branchInfo$get$commi : '';
+  return (_branchInfo$get$commi = (_branchInfo$get = branchInfo.get(currentBranch)) === null || _branchInfo$get === void 0 ? void 0 : _branchInfo$get.commitSha) !== null && _branchInfo$get$commi !== void 0 ? _branchInfo$get$commi : "";
 }
 const Ref_base = gql`
   fragment Ref_base on Ref {
@@ -2629,13 +2659,13 @@ function fetchGitHubTreeData(sha, config) {
       return result;
     }
     const auth = await getAuth(config);
-    if (!auth) throw new Error('Not authorized');
+    if (!auth) throw new Error("Not authorized");
     const {
       tree
-    } = await fetch(config.storage.kind === 'github' ? `https://api.github.com/repos/${serializeRepoConfig(config.storage.repo)}/git/trees/${sha}?recursive=1` : `${KEYSTATIC_CLOUD_BROWSER_API_URL}/v1/github/trees/${sha}`, {
+    } = await fetch(config.storage.kind === "github" ? `https://api.github.com/repos/${serializeRepoConfig(config.storage.repo)}/git/trees/${sha}?recursive=1` : `${KEYSTATIC_CLOUD_BROWSER_API_URL}/v1/github/trees/${sha}`, {
       headers: {
         Authorization: `Bearer ${auth.accessToken}`,
-        ...(config.storage.kind === 'cloud' ? KEYSTATIC_CLOUD_HEADERS : {})
+        ...(config.storage.kind === "cloud" ? KEYSTATIC_CLOUD_HEADERS : {})
       }
     }).then(x => x.json());
     const treeEntries = tree.map(({
@@ -4448,4 +4478,4 @@ function text({
   };
 }
 
-export { RouterProvider as $, setDraft as A, delDraft as B, useEventCallback as C, useConfig as D, getBranchPrefix as E, getRepoUrl as F, GitHubAppShellQuery as G, getPathPrefix as H, getDataFileExtension as I, isGitHubConfig as J, useViewer as K, LOADING as L, useContentPanelState as M, ContentPanelProvider as N, AppShellErrorContext as O, ConfigContext as P, AppStateContext as Q, GitHubAppShellProvider as R, LocalAppShellProvider as S, useBranches as T, GitHubAppShellDataContext as U, getSingletonFormat as V, getSingletonPath as W, isCloudConfig as X, KEYSTATIC_CLOUD_BROWSER_API_URL as Y, KEYSTATIC_CLOUD_HEADERS as Z, assertValidRepoConfig as _, useTree as a, setBlobToPersistedCache as a$, redirectToCloudAuth as a0, CloudInfoProvider as a1, GitHubAppShellDataProvider as a2, useAppState as a3, useChanged as a4, Ref_base as a5, blockElementSpacing as a6, useImageLibraryURL as a7, clearObjectCache as a8, clearDrafts as a9, insertNodesButReplaceIfSelectionIsAtEmptyParagraphOrHeading as aA, object as aB, clearFormatting as aC, EditorAfterButIgnoringingPointsWithNoContent as aD, isInlineContainer as aE, withDocumentFeaturesNormalization as aF, editorSchema as aG, useContentPanelSize as aH, ActiveBlockPopoverProvider as aI, getPlaceholderTextForPropPath as aJ, getWholeDocumentFeaturesForChildField as aK, fixPath as aL, basicFormFieldWithSimpleReaderParse as aM, text as aN, collectDirectoriesUsedInSchema as aO, getSyncAuth as aP, CloudAppShellQuery as aQ, useSetTreeSha as aR, useCurrentUnscopedTree as aS, getTreeNodeAtPath as aT, updateTreeWithChanges as aU, hydrateTreeCacheWithEntries as aV, scopeEntriesWithPathPrefix as aW, fetchGitHubTreeData as aX, getTreeKey as aY, getDirectoriesForTreeKey as aZ, treeSha as a_, useRawCloudInfo as aa, FieldDataError as ab, AddToPathProvider as ac, moveChildren as ad, isBlock as ae, nodeTypeMatcher as af, getAncestorComponentChildFieldDocumentFeatures as ag, allMarks as ah, isElementActive as ai, useContentPanelQuery as aj, PathContextProvider as ak, SlugFieldProvider as al, useElementWithSetNodes as am, useActiveBlockPopover as an, BlockPopoverTrigger as ao, BlockPopover as ap, focusWithPreviousSelection as aq, cloneDescendent as ar, areArraysEqual as as, getSchemaAtPropPath as at, NotEditable as au, getDocumentFeaturesForChildField as av, getAncestorSchemas as aw, normalizeTextBasedOnInlineMarksAndSoftBreaks as ax, normalizeElementBasedOnDocumentFeatures as ay, normalizeInlineBasedOnLinks as az, useRepoInfo as b, getBlobFromPersistedCache as b0, loadImageData as b1, emptyImageData as b2, UploadImageButton as b3, ImageDimensionsInput as b4, parseImageData as b5, assertRequired as b6, SlugFieldContext as b7, PathContext as b8, validateText as b9, treeEntriesToTreeNodes as ba, CloudImagePreviewForNewEditor as bb, cloudImageToolbarIcon as bc, handleFile as bd, CloudImagePreview as be, useCurrentBranch as c, useBaseCommit as d, getEntriesInCollectionWithTreeKey as e, useData as f, getCollectionPath as g, getCollectionFormat as h, isLocalConfig as i, getEntryDataFilepath as j, getCollectionItemPath as k, getSlugGlobForCollection as l, getAuth as m, useCloudInfo as n, useAwarenessStates as o, parseRepoConfig as p, getSlugFromState as q, blobSha as r, serializeRepoConfig as s, useYjs as t, useRouter as u, getDraft as v, useYjsIfAvailable as w, getCollection as x, suspendOnData as y, useShowRestoredDraftMessage as z };
+export { assertValidRepoConfig as $, setDraft as A, delDraft as B, useEventCallback as C, useConfig as D, getBranchPrefix as E, getRepoUrl as F, GitHubAppShellQuery as G, getPathPrefix as H, getDataFileExtension as I, isGitHubConfig as J, useViewer as K, LOADING as L, useContentPanelState as M, ContentPanelProvider as N, AppShellErrorContext as O, ConfigContext as P, AppStateContext as Q, GitHubAppShellProvider as R, LocalAppShellProvider as S, useRawCloudInfo as T, useBranches as U, GitHubAppShellDataContext as V, getSingletonFormat as W, getSingletonPath as X, isCloudConfig as Y, KEYSTATIC_CLOUD_BROWSER_API_URL as Z, KEYSTATIC_CLOUD_HEADERS as _, useTree as a, setBlobToPersistedCache as a$, RouterProvider as a0, redirectToCloudAuth as a1, CloudInfoProvider as a2, GitHubAppShellDataProvider as a3, useAppState as a4, useChanged as a5, Ref_base as a6, blockElementSpacing as a7, useImageLibraryURL as a8, clearObjectCache as a9, insertNodesButReplaceIfSelectionIsAtEmptyParagraphOrHeading as aA, object as aB, clearFormatting as aC, EditorAfterButIgnoringingPointsWithNoContent as aD, isInlineContainer as aE, withDocumentFeaturesNormalization as aF, editorSchema as aG, useContentPanelSize as aH, ActiveBlockPopoverProvider as aI, getPlaceholderTextForPropPath as aJ, getWholeDocumentFeaturesForChildField as aK, fixPath as aL, basicFormFieldWithSimpleReaderParse as aM, text as aN, collectDirectoriesUsedInSchema as aO, getSyncAuth as aP, CloudAppShellQuery as aQ, useSetTreeSha as aR, useCurrentUnscopedTree as aS, getTreeNodeAtPath as aT, updateTreeWithChanges as aU, hydrateTreeCacheWithEntries as aV, scopeEntriesWithPathPrefix as aW, fetchGitHubTreeData as aX, getTreeKey as aY, getDirectoriesForTreeKey as aZ, treeSha as a_, clearDrafts as aa, FieldDataError as ab, AddToPathProvider as ac, moveChildren as ad, isBlock as ae, nodeTypeMatcher as af, getAncestorComponentChildFieldDocumentFeatures as ag, allMarks as ah, isElementActive as ai, useContentPanelQuery as aj, PathContextProvider as ak, SlugFieldProvider as al, useElementWithSetNodes as am, useActiveBlockPopover as an, BlockPopoverTrigger as ao, BlockPopover as ap, focusWithPreviousSelection as aq, cloneDescendent as ar, areArraysEqual as as, getSchemaAtPropPath as at, NotEditable as au, getDocumentFeaturesForChildField as av, getAncestorSchemas as aw, normalizeTextBasedOnInlineMarksAndSoftBreaks as ax, normalizeElementBasedOnDocumentFeatures as ay, normalizeInlineBasedOnLinks as az, useRepoInfo as b, getBlobFromPersistedCache as b0, loadImageData as b1, emptyImageData as b2, UploadImageButton as b3, ImageDimensionsInput as b4, parseImageData as b5, assertRequired as b6, SlugFieldContext as b7, PathContext as b8, validateText as b9, treeEntriesToTreeNodes as ba, CloudImagePreviewForNewEditor as bb, cloudImageToolbarIcon as bc, handleFile as bd, CloudImagePreview as be, useCurrentBranch as c, useBaseCommit as d, getEntriesInCollectionWithTreeKey as e, useData as f, getCollectionPath as g, getCollectionFormat as h, isLocalConfig as i, getEntryDataFilepath as j, getCollectionItemPath as k, getSlugGlobForCollection as l, getAuth as m, useCloudInfo as n, useAwarenessStates as o, parseRepoConfig as p, getSlugFromState as q, blobSha as r, serializeRepoConfig as s, useYjs as t, useRouter as u, getDraft as v, useYjsIfAvailable as w, getCollection as x, suspendOnData as y, useShowRestoredDraftMessage as z };

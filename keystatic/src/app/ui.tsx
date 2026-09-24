@@ -6,6 +6,7 @@ import {
   useState,
   Fragment,
 } from 'react';
+import type { FormEvent } from 'react';
 
 import { Button } from '@keystar/ui/button';
 import { Icon } from '@keystar/ui/icon';
@@ -14,7 +15,7 @@ import { githubIcon } from '@keystar/ui/icon/icons/githubIcon';
 import { Flex } from '@keystar/ui/layout';
 import { Text } from '@keystar/ui/typography';
 
-import { CloudConfig, Config, GitHubConfig } from '../config';
+import { Config } from '../config';
 import { CollectionPage } from './CollectionPage';
 import { CreateItem } from './create-item';
 import { DashboardPage } from './dashboard';
@@ -106,6 +107,14 @@ function PageInner({ config }: { config: Config }) {
   if (params.join('/') === 'cloud/oauth/callback') {
     return <KeystaticCloudAuthCallback config={config} />;
   }
+  if (
+    isLocalConfig(config) &&
+    config.ui?.localAuth &&
+    params.length === 1 &&
+    params[0] === 'setup'
+  ) {
+    return <LocalSetup config={config} />;
+  }
   let wrapper: (element: ReactElement) => ReactElement = x => x;
   if (
     isCloudConfig(config) ||
@@ -113,6 +122,12 @@ function PageInner({ config }: { config: Config }) {
   ) {
     wrapper = element => (
       <CloudInfoProvider config={config}>{element}</CloudInfoProvider>
+    );
+  }
+  if (isLocalConfig(config) && config.ui?.localAuth) {
+    const originalWrapper = wrapper;
+    wrapper = element => (
+      <AuthWrapper config={config}>{originalWrapper(element)}</AuthWrapper>
     );
   }
   if (isGitHubConfig(config) || isCloudConfig(config)) {
@@ -209,7 +224,7 @@ function AlwaysNotFound(): never {
 }
 
 function AuthWrapper(props: {
-  config: GitHubConfig | CloudConfig;
+  config: Config;
   children: ReactElement;
 }) {
   const [state, setState] = useState<'unknown' | 'valid' | 'explicit-auth'>(
@@ -255,8 +270,205 @@ function AuthWrapper(props: {
         <RedirectToCloudLogin config={props.config} from={router.params} />
       );
     }
+    if (props.config.storage.kind === 'local' && props.config.ui?.localAuth) {
+      return <LocalLogin config={props.config} />;
+    }
   }
   return null;
+}
+
+function LocalLogin(props: { config: Config }) {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const project = props.config.ui?.localAuth?.project;
+
+  async function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!project) return;
+    setSubmitting(true);
+    setError(null);
+    try {
+      const response = await fetch('/api/keystatic/local/login', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password, project_id: project }),
+      });
+      if (!response.ok) {
+        setError('Usuário, senha ou acesso ao projeto inválido.');
+        return;
+      }
+      window.location.reload();
+    } catch {
+      setError('Não foi possível acessar o serviço de autenticação.');
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  return (
+    <Flex justifyContent="center" alignItems="center" height="100vh">
+      <form
+        onSubmit={submit}
+        style={{ display: 'grid', gap: '1rem', minWidth: '20rem' }}
+      >
+        <div>
+          <h1>Entrar no Keystatic</h1>
+          <p>
+            Use a conta local criada pelo administrador deste projeto.
+          </p>
+        </div>
+        <label>
+          Usuário
+          <input
+            autoComplete="username"
+            disabled={submitting}
+            onChange={event => setUsername(event.target.value)}
+            required
+            value={username}
+          />
+        </label>
+        <label>
+          Senha
+          <input
+            autoComplete="current-password"
+            disabled={submitting}
+            minLength={12}
+            onChange={event => setPassword(event.target.value)}
+            required
+            type="password"
+            value={password}
+          />
+        </label>
+        {error && <p role="alert">{error}</p>}
+        <button disabled={submitting} type="submit">
+          {submitting ? 'Entrando…' : 'Entrar'}
+        </button>
+      </form>
+    </Flex>
+  );
+}
+
+function LocalSetup(props: { config: Config }) {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [passwordConfirmation, setPasswordConfirmation] = useState('');
+  const [bootstrapToken, setBootstrapToken] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const project = props.config.ui?.localAuth?.project;
+  const repository = props.config.ui?.localAuth?.repository;
+
+  async function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!project || !repository) {
+      setError('O projeto ou repositório autorizado não está configurado.');
+      return;
+    }
+    if (password !== passwordConfirmation) {
+      setError('As senhas não coincidem.');
+      return;
+    }
+    setSubmitting(true);
+    setError(null);
+    try {
+      const response = await fetch('/api/keystatic/local/register', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Auth-Bootstrap': bootstrapToken,
+        },
+        body: JSON.stringify({
+          username,
+          password,
+          project_id: project,
+          site_url: window.location.origin,
+          github_repository: repository,
+        }),
+      });
+      if (!response.ok) {
+        setError(
+          'Não foi possível criar o administrador. Confirme o token e se o bootstrap ainda está disponível.'
+        );
+        return;
+      }
+      window.location.assign('/keystatic');
+    } catch {
+      setError('Não foi possível acessar o serviço de autenticação.');
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  return (
+    <Flex justifyContent="center" alignItems="center" height="100vh">
+      <form
+        onSubmit={submit}
+        style={{ display: 'grid', gap: '1rem', minWidth: '20rem' }}
+      >
+        <div>
+          <h1>Criar o primeiro administrador</h1>
+          <p>
+            Este cadastro só funciona uma vez. Use o token de bootstrap
+            fornecido pelo operador da API; ele não é armazenado no navegador.
+          </p>
+        </div>
+        <label>
+          Usuário
+          <input
+            autoComplete="username"
+            disabled={submitting}
+            minLength={3}
+            onChange={event => setUsername(event.target.value)}
+            required
+            value={username}
+          />
+        </label>
+        <label>
+          Senha
+          <input
+            autoComplete="new-password"
+            disabled={submitting}
+            minLength={12}
+            onChange={event => setPassword(event.target.value)}
+            required
+            type="password"
+            value={password}
+          />
+        </label>
+        <label>
+          Confirmar senha
+          <input
+            autoComplete="new-password"
+            disabled={submitting}
+            minLength={12}
+            onChange={event => setPasswordConfirmation(event.target.value)}
+            required
+            type="password"
+            value={passwordConfirmation}
+          />
+        </label>
+        <label>
+          Token de bootstrap
+          <input
+            autoComplete="off"
+            disabled={submitting}
+            onChange={event => setBootstrapToken(event.target.value)}
+            required
+            type="password"
+            value={bootstrapToken}
+          />
+        </label>
+        {error && <p role="alert">{error}</p>}
+        <button disabled={submitting} type="submit">
+          {submitting ? 'Criando…' : 'Criar administrador'}
+        </button>
+      </form>
+    </Flex>
+  );
 }
 
 function RedirectToCloudLogin(props: { config: Config; from: string[] }) {

@@ -1,5 +1,5 @@
 import '@keystar/ui/picker';
-import { l as loadDataFile, p as parseProps, a6 as getValueAtPropPath, a7 as formatFormDataError } from './useItemData-83243723.js';
+import { l as loadDataFile, p as parseProps, a6 as getValueAtPropPath, a7 as formatFormDataError } from './useItemData-a15ccb4e.js';
 import 'react/jsx-runtime';
 import '@keystar/ui/button';
 import '@keystar/ui/dialog';
@@ -11,7 +11,7 @@ import '@keystar/ui/typography';
 import 'react-aria/useLocalizedStringFormatter';
 import 'react-aria/useField';
 import 'react';
-import { h as getCollectionFormat, g as getCollectionPath, aB as object, l as getSlugGlobForCollection, I as getDataFileExtension, V as getSingletonFormat, W as getSingletonPath, k as getCollectionItemPath, j as getEntryDataFilepath } from './index-68d71016.js';
+import { h as getCollectionFormat, g as getCollectionPath, aB as object, l as getSlugGlobForCollection, I as getDataFileExtension, W as getSingletonFormat, X as getSingletonPath, k as getCollectionItemPath, j as getEntryDataFilepath } from './index-f046736f.js';
 import '@keystar/ui/drag-and-drop';
 import '@keystar/ui/icon';
 import '@keystar/ui/icon/icons/trash2Icon';
